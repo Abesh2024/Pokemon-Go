@@ -1,105 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pokémon API Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeMon</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <select id="filter"></select>
-  <button class="filterbutton">Filter</button>
-  <button class="reset">Reset</button>
-  <div class="display"></div>
 
-  <script>
-    const typeUrl = "https://pokeapi.co/api/v2/type/";
-    const pokemonUrl = "https://pokeapi.co/api/v2/pokemon/";
+    <main>
+        <div class="first">
+            <select name="" id="filter" >select types
+                <!-- <option value="">type</option> -->
+            </select>
 
-    const list = document.getElementById("filter");
-    const btn = document.querySelector(".filterbutton");
-    const display = document.querySelector(".display");
-    const reset = document.querySelector(".reset");
+            <button class="filterbutton">filter by type</button>
+            <button class="reset">reset</button>
+            <input type="search" name="" id="search" placeholder="get yours">
 
-    async function fetchTypes() {
-      try {
-        const response = await fetch(typeUrl);
-        const data = await response.json();
-        const types = data.results;
-        types.forEach(type => {
-          const option = document.createElement("option");
-          option.innerText = type.name;
-          option.setAttribute("value", type.url);
-          list.appendChild(option);
-        });
-      } catch (error) {
-        console.error("Error fetching types:", error);
-      }
-    }
+        </div>
 
-    async function fetchPokemonsByType(url) {
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const pokemons = data.pokemon.slice(0, 10); // Limit to 10 pokemons
-        const promises = pokemons.map(entry => fetchPokemonData(entry.pokemon.url));
-        const pokemonData = await Promise.all(promises);
-        showPokemonData(pokemonData);
-      } catch (error) {
-        console.error("Error fetching pokemons by type:", error);
-      }
-    }
+        <div class="display">
 
-    async function fetchPokemonData(url) {
-      const response = await fetch(url);
-      return response.json();
-    }
+        </div>
+    </main>
 
-    function showPokemonData(pokemons) {
-      display.innerHTML = "";
-      pokemons.forEach(pokemon => {
-        const container = document.createElement("div");
-        const image = document.createElement("img");
-        const span = document.createElement("span");
-        image.setAttribute("src", pokemon.sprites.front_default);
-        span.innerText = pokemon.name;
-        container.appendChild(image);
-        container.appendChild(span);
-        display.appendChild(container);
-      });
-    }
-
-    btn.addEventListener("click", () => {
-      const selectedTypeUrl = list.value;
-      if (selectedTypeUrl) {
-        fetchPokemonsByType(selectedTypeUrl);
-      } else {
-        console.error("No type selected");
-      }
-    });
-
-    reset.addEventListener("click", () => {
-      display.innerHTML = "";
-    });
-
-    // Initial setup
-    fetchTypes();
-
-    // Fetch and display some initial pokemons
-    async function fetchAndDisplayInitialPokemons() {
-      try {
-        const pokemons = [];
-        for (let i = 1; i <= 40; i++) {
-          const response = await fetch(`${pokemonUrl}${i}`);
-          const pokemon = await response.json();
-          pokemons.push(pokemon);
-        }
-        showPokemonData(pokemons);
-      } catch (error) {
-        console.error("Error fetching initial pokemons:", error);
-      }
-    }
-
-    fetchAndDisplayInitialPokemons();
-  </script>
+    <script src="./script.js"></script>
 </body>
+
 </html>
+
