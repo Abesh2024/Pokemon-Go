@@ -1,125 +1,125 @@
 const url = "https://pokeapi.co/api/v2/type/";
-
-let list = document.getElementById("filter");
-
-let btn = document.querySelector(".filterbutton");
-
-let display = document.querySelector(".display");
-
-let reset = document.querySelector(".reset");
+const list = document.getElementById("filter");
+const btn = document.querySelector(".filterbutton");
+const display = document.querySelector(".display");
+const reset = document.querySelector(".reset");
+const input = document.querySelector("#search");
 
 async function fetchApi() {
-  let data = await fetch(url);
-  let data2 = await data.json();
-  let data3 = data2.results;
-  console.log(data3);
+  const data = await fetch(url);
+  const { results: data3 } = await data.json();
+  // console.log(data3)
   data3.forEach((e) => {
-    let option = document.createElement("option");
+    const option = document.createElement("option");
     option.innerText = e.name;
     option.setAttribute("value", e.url);
     list.append(option);
-    // console.log(option.value, option.innerText);
   });
 }
 
-//for pokemons url
 async function displayPok() {
-  let arr = [];
-  let data = await fetch(list.value);
-
-  let data2 = await data.json();
-
+  // console.log(list.value);
+  const arr = [];
+  const data = await fetch(list.value);
+  const data2 = await data.json();
   // console.log(data2)
-  // data2>pokemon=>pokemon>url
-  //
-  data2.pokemon.forEach(async (e, idx) => {
-    // console.log("abc", e);
-    if (idx < 11) {
-    //  using .then
-      arr.push(fetch(e.pokemon.url).then((response) => response.json()));
 
-    //  using async await
-        // const fetchData = await  fetch(e.pokemon.url);
-        // const  data = await fetchData.json();
-        // arr.push(data);
-    }
-  });
-  // console.log(arr.length);
-  // showData(arr)
-  // data2.pokemon= array=>{pokeon=>{name , url}, slot}
-//   let filteredArr = [];
-  // arr.forEach(async (e) => {
-  //     let a = await fetch(e.url)
-  //     let b = await a.json();
-  //     filteredArr.push(b)
-  //     console.log(filteredArr);
-  // })
+  const pokemonUrls = data2.pokemon.slice(0, 11).map((pok) => pok.pokemon.url);
 
-
+  // console.log(pokemonUrls)
   
-    //  using .then
-  Promise.all(arr).then((value) => {
-    showData(value);
-  });
-
-
- //  using async await
-//   const  result = await Promise.all(arr);
-//   showData(result);
-
-
-
-  //     let div = document.createElement('div');
-  //     let img  = document.createElement('img');
-  //     let span = document.createElement('span');
-  //     img.setAttribute('src', b.sprites.front_default)
-  //     span.innerText = b.name;
-  //     div.append(img, span)
-
-          display.append(div)
-  // })
+  for (const e of pokemonUrls) {
+    const response = await fetch(e);
+    const pokemonData = await response.json();
+    arr.push(pokemonData);
+  } 
+  console.log(arr);
+  showData(arr);
 }
+
 
 fetchApi();
-
-// displayPok()
-
 btn.addEventListener("click", displayPok);
 
-let newArr = [];
+const newArr = [];
 async function onloadDisplay() {
-  for (let i = 1; i < 33; i++) {
-    let data1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
-    let data2 = await data1.json();
+  for (let i = 1; i < 60; i++) {
+    const data1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
+    const data2 = await data1.json();
     newArr.push(data2);
   }
-
   showData(newArr);
 }
-
-// window.onload = () =>
 onloadDisplay();
 
+
+
 function showData(arr) {
-    
   display.innerHTML = "";
   arr.forEach((data2) => {
-    // console.log(data2);
-    let container = document.createElement("div");
-    let image = document.createElement("img");
-    let span = document.createElement("span");
+    console.log(data2)
+    const container = document.createElement("div");
+    container.classList.add("aligning")
+    const id = document.createElement("p");
+    const image = document.createElement("img");
+    const span = document.createElement("span");
+    id.innerText = data2.id;
     image.setAttribute("src", data2.sprites.front_default);
     span.innerText = data2.name;
-    container.append(image, span);
-
+    container.append(id,image, span);
     display.append(container);
   });
 }
-// console.log(arr);
+// setTimeout(showData, 5000)
 
 reset.addEventListener("click", () => {
   display.innerHTML = "";
   showData(newArr);
 });
 
-// console.log("click", showData(newArr))
+
+  input.addEventListener("input", ()=>{
+      let searchRes = input.value.toLowerCase();
+      let finalSearchRes = newArr.filter((pokemon) => pokemon.name.includes(searchRes) || pokemon.id.toString().includes(searchRes));
+      // console.log("filteredPokemon", finalSearchRes)
+      // setTimeout(showData(finalSearchRes), 6000);
+      setTimeout(() => {
+        showData(finalSearchRes);
+      }, 400);
+      // console.log("hi....");
+});
+
+
+
+
+
+
+
+// // let slowDown = null;
+// input.addEventListener("input", ()=>{
+//   let searchRes = input.value.toLowerCase();
+//   let finalSearchRes = newArr.filter((pokemon) => pokemon.name.includes(searchRes) || pokemon.id.toString().includes(searchRes));
+//   // console.log("filteredPokemon", finalSearchRes)
+//   // if(slowDown != null) {
+//   //   clearTimeout(slowDown)
+//   // }
+//   // console.log(slowDown)
+//    slowDown = setTimeout(function() {
+//     showData(finalSearchRes)
+//     slowDown = null;
+//   }, 500);
+//   // console.log(slowDown)
+// })
+
+// input.addEventListener("input", ()=>{
+//   let searchRes = input.value;
+//   let finalSearchRes = newArr.filter((pokemon) => pokemon.id.includes(searchRes));
+//   // console.log("filteredPokemon", finalSearchRes)
+//   showData(finalSearchRes);
+//   // console.log("abesh", newArr[0].name.includes("bul"));
+// })
+
+// setTimeout--->5s BrowserAPi
+
+
+
